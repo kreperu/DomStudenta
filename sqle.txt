@@ -1,0 +1,69 @@
+Pozamieniajcie se wszędzie tStudent na tOsoba!
+Możecie mieć problem że nie umie znaleźć tOsoba.Imiona -> pozmieniajcie Imiona na Imię albo jakkolwiek tam macie.
+Ogólnie pozamieniajcie se nazwy kolumn w tym jak w swoich tabelach macie inne.
+
+k8_12:
+SELECT tStudent.Nazwisko, tStudent.Imiona, tStudent.Album, tWpłaty.pokwitowanie, tWpłaty.data, tWpłaty.wplata, [tWpłaty].[wplata]*0.1 AS Na_remont
+FROM tStudent LEFT JOIN tWpłaty ON tStudent.id = tWpłaty.idStudent
+WHERE (((tWpłaty.rokAkad)=2017) AND ((Month([tWpłaty].[data]))=11) AND ((tStudent.[Album])>60000))
+ORDER BY tStudent.Nazwisko, tStudent.Imiona, tStudent.Album;
+
+k8_13:
+SELECT tStudent.*
+FROM tStudent
+WHERE Płeć = "Mężczyzna";
+(potem w widoku danych w accesie musicie dać Narzędzia Główne -> Rekodry -> Sumy (pokaże sie dodatkowy wiersz na końcu) -> w pierwszej kolumnie tego dodatkowego końcowego wiersza wybrać "Liczba"
+
+k8_14:
+SELECT tWpłaty.*
+FROM tStudent LEFT JOIN tWpłaty ON tStudent.id = tWpłaty.idStudent
+WHERE (((tStudent.Nazwisko) Like "A*" Or (tStudent.Nazwisko) Like "B*" Or (tStudent.Nazwisko) Like "C*"));
+(potem w widoku danych w accesie musicie dać Narzędzia Główne -> Rekodry -> Sumy (pokaże sie dodatkowy wiersz na końcu) -> w 4 kolumnie tego dodatkowego końcowego wiersza wybrać "Minimum"
+
+k8_15:
+SELECT Count([tStudent]![id]) AS Ile
+FROM tStudent
+WHERE ((Left([tStudent].[PESEL],2)=95));
+
+k8_16:
+SELECT Count([tZakwaterowanie].[id]) AS Ile
+FROM tStudent LEFT JOIN tZakwaterowanie ON tStudent.id = tZakwaterowanie.IdStudent
+WHERE (((tStudent.nazwisko) Like "D*" Or (tStudent.nazwisko) Like "K*") AND ((tStudent.Imiona) Like "*ł"));
+
+k8_17:
+SELECT Min([tKosztyZakwaterowania].[kwota]) AS MinKW
+FROM (tStudent LEFT JOIN tZakwaterowanie ON tStudent.id = tZakwaterowanie.IdStudent) LEFT JOIN tKosztyZakwaterowania ON tZakwaterowanie.id = tKosztyZakwaterowania.idZakw
+WHERE (((tStudent.Płeć)="Mężczyzna")) AND Mid([tStudent].[PESEL],3,2) IN (85, 05, 25, 45, 65);
+
+k8_18:
+SELECT tStudent.Album, Min(tWpłaty.data) AS Data, tZakwaterowanie.wydzial
+FROM (tStudent LEFT JOIN tWpłaty ON tStudent.id = tWpłaty.idStudent) LEFT JOIN tZakwaterowanie ON tStudent.id = tZakwaterowanie.IdStudent
+GROUP BY tStudent.Album, tWpłaty.rokAkad, tZakwaterowanie.wydzial
+HAVING (((tWpłaty.rokAkad)=2017) AND ((tZakwaterowanie.wydzial)="Mechaniczny"));
+
+k8_19:
+SELECT tStudent.Płeć, Count(tStudent.id) AS Ile
+FROM tStudent
+GROUP BY tStudent.Płeć;
+
+k8_20:
+SELECT Count([tZakwaterowanie].[Id]) AS Ile
+FROM tPokoje RIGHT JOIN tZakwaterowanie ON tPokoje.nrPokoju = tZakwaterowanie.nrPokoju
+WHERE ((DateSerial(2017,10,15)=[tZakwaterowanie].[dataZakwaterowania] And [tPokoje].[pietro]=2));
+
+k8_21:
+SELECT Count(tWpłaty.id) AS Ile, tStudent.płeć
+FROM tStudent LEFT JOIN tWpłaty ON tStudent.id = tWpłaty.idStudent
+WHERE (((tWpłaty.rokAkad)=2017))
+GROUP BY tStudent.płeć;
+
+k8_22_1:
+SELECT DISTINCT tZakwaterowanie.wydzial, tZakwaterowanie.id
+FROM tZakwaterowanie;
+(potem w projekcie w arkuszu właściwości kwerendy ustawcie "Wartości Unikatowe" na "Tak")
+
+k8_22_2:
+SELECT Count([tZakwaterowanie].[IdStudent]) AS Ile
+FROM tZakwaterowanie INNER JOIN k8_22_1 ON tZakwaterowanie.id = k8_22_1.id
+WHERE (([k8_22_1]![wydzial]="Mechaniczny") AND ((tZakwaterowanie.dataWykwaterowania) Is Null));
+
